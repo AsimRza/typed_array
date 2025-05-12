@@ -1,3 +1,7 @@
 {
-  "name": "TYPED_ARRAY"
+  "name": "TYPED_ARRAY",
+  "scripts": {
+    "start": "node ./arrayBuffer/index.js",
+    "start:shared": "node ./sharedBuffer/main.js"
+  }
 }
