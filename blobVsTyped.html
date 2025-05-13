@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blob and TypedArray Example</title>
+  </head>
+  <body>
+    <input type="file" id="fileInput" accept="image/*" />
+    <canvas id="canvas"></canvas>
+
+    <script>
+      document
+        .getElementById("fileInput")
+        .addEventListener("change", handleFile);
+
+      function handleFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Create a Blob from the file and read it using FileReader
+        const blob = new Blob([file], { type: file.type });
+        const reader = new FileReader();
+
+        reader.onload = function () {
+          const arrayBuffer = reader.result; // This is the raw binary data
+          const typedArray = new Uint8Array(arrayBuffer); // Convert to TypedArray
+
+          // Create an image from the Blob
+          const img = new Image();
+          img.onload = function () {
+            // Set up canvas to display the image
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+
+            // Get the pixel data using canvas
+            const imageData = ctx.getImageData(
+              0,
+              0,
+              canvas.width,
+              canvas.height
+            );
+            const data = imageData.data; // This is a typed array (Uint8Array) containing RGBA values
+
+            // Apply a simple image processing effect: Invert colors
+            for (let i = 0; i < data.length; i += 4) {
+              // Invert red, green, blue channels
+              data[i] = 255 - data[i]; // Red
+              data[i + 1] = 255 - data[i + 1]; // Green
+              data[i + 2] = 255 - data[i + 2]; // Blue
+              // Alpha channel remains the same
+            }
+
+            // Put the modified pixel data back onto the canvas
+            ctx.putImageData(imageData, 0, 0);
+          };
+
+          // Set the image source to the blob URL
+          img.src = URL.createObjectURL(blob);
+        };
+
+        // Read the blob as an ArrayBuffer (raw binary data)
+        reader.readAsArrayBuffer(blob);
+      }
+    </script>
+  </body>
+</html>
