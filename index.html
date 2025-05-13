@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input type="file" id="imageInput" accept="image/*" />
+    <img id="preview" width="200" />
+
+    <script>
+      const imageInput = document.getElementById("imageInput");
+      const preview = document.getElementById("preview");
+
+      imageInput.addEventListener("change", () => {
+        const file = imageInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function () {
+          preview.src = reader.result; // reader.result is a base64 string
+        }; //onload,onerror,onprogress,onloadend
+
+        reader.readAsDataURL(file);
+        //readAsText,readAsArrayBuffer,readAsBinaryString
+      });
+    </script>
+  </body>
+</html>
